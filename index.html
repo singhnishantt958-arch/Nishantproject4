@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD Surprise! ✨📸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-bg: #fff0f3;
+            --dark-pink: #ff4d6d;
+            --tape-color: rgba(255, 255, 255, 0.6);
+            --glow: #ff69b4;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--pink-bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            transition: background 1s ease;
+        }
+
+        .heart {
+            position: fixed; color: var(--dark-pink); font-size: 20px; z-index: -1;
+            animation: float 5s linear infinite;
+        }
+        @keyframes float { 0% { transform: translateY(110vh); opacity: 1; } 100% { transform: translateY(-10vh); opacity: 0; } }
+
+        /* Floating Butterflies ✨ */
+        .butterfly {
+            position: fixed;
+            font-size: 24px;
+            opacity: 0;
+            z-index: 5;
+            animation: butterfly-fly 3s ease-out forwards;
+        }
+
+        @keyframes butterfly-fly {
+            0% { transform: scale(0.5) translate(0, 0); opacity: 1; }
+            100% { transform: scale(1.2) translate(100px, -200px); opacity: 0; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 25px; border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.1);
+            max-width: 85%; width: 400px; z-index: 10;
+        }
+
+        button { padding: 12px 28px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; margin: 10px; }
+        .btn-yes { background: var(--dark-pink); color: white; }
+        #noBtn { background: #eee; color: #888; position: relative; transition: 0.2s; }
+
+        .hidden { display: none !important; }
+
+        /* Card Stack Scrapbook */
+        #step3 { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .stack-area { position: relative; width: 300px; height: 400px; }
+
+        .photo-card {
+            position: absolute; top: 0; left: 0; background: white;
+            padding: 12px 12px 35px; border: 3px solid var(--glow);
+            width: 100%; border-radius: 10px; cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s;
+            transform: rotate(var(--r));
+            animation: glowPulse 1.5s infinite alternate;
+        }
+
+        @keyframes glowPulse { from { border-color: #ff69b4; box-shadow: 0 0 10px #ff69b4; } to { border-color: #fff; box-shadow: 0 0 25px #fff; } }
+
+        .photo-card img { width: 100%; height: 280px; object-fit: cover; border-radius: 5px; }
+        .photo-quote { font-family: 'Dancing Script'; font-size: 1.1rem; margin-top: 15px; color: #333; }
+        
+        .sticker { position: absolute; font-size: 2rem; z-index: 5; transform: rotate(var(--sr)); }
+        .washi-tape { position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-5deg); width: 70px; height: 20px; background: rgba(255, 255, 255, 0.8); }
+
+        .bye-text { font-family: 'Dancing Script'; font-size: 4rem; color: var(--dark-pink); animation: heartbeat 1.5s infinite; margin-bottom: 0; }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    </style>
+</head>
+<body id="mainBody">
+
+    <audio id="bgMusic" loop><source src="mfcc-happy-birthday-368842.mp3" type="audio/mpeg"></audio>
+
+    <div id="step1" class="container">
+        <h1>Heyy, it's your birthday today? 🎂🥳</h1>
+        <button class="btn-yes" onclick="goToStep2()">Yes! 😍</button>
+        <button id="noBtn" onmouseover="moveNoButton()" onclick="moveNoButton()">No.. 😝</button>
+    </div>
+
+    <div id="step2" class="container hidden">
+        <h1 id="reactionText"></h1>
+        <button class="btn-yes" onclick="openScrapbook()">Tap for your gift 🎁😋</button>
+    </div>
+
+    <div id="step3" class="hidden">
+        <p style="color:#fff; font-style:italic; margin-bottom:20px;">Tap on the photos... 😋👆</p>
+        <div class="stack-area" id="stack"></div>
+        <button id="nextStepBtn" class="btn-yes hidden" style="margin-top: 40px;" onclick="showClosingNote()">Next ❤️🥳</button>
+    </div>
+
+    <div id="step4" class="container hidden">
+        <h1 style="font-family: 'Poppins'; font-weight: 700;">Wait, last thing... 😋</h1>
+        <p id="finalMsg" style="min-height: 80px; line-height: 1.6; color:#555;"></p>
+        <div id="finalPart" class="hidden">
+            <h2 style="color: var(--dark-pink); font-family: 'Dancing Script'; font-size: 2.2rem; margin: 15px 0;">Happy Birthday<br>Cutie / Rasmalai 🍬🥳</h2>
+            <button class="btn-yes" onclick="showByeBye()">Finish 📖❤️</button>
+        </div>
+    </div>
+
+    <div id="step5" class="container hidden" style="background:none; box-shadow:none;">
+        <h1 class="bye-text">Bye Bye! ❤️</h1>
+        <h2 style="color: #555; font-family: 'Poppins'; margin-top: 0;">Enjoy your day to the fullest! 🥳🔥</h2>
+        <p style="color: #888; font-size: 1.1rem;">(Ab jao party kar lo 😋)</p>
+        <button class="btn-yes" style="background:#fff; color:var(--dark-pink); border:2px solid var(--dark-pink); margin-top:30px;" onclick="location.reload()">Restart Magic ✨</button>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        let currentPhotoIndex = 0;
+
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.classList.add('heart'); heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }, 400);
+
+        function moveNoButton() {
+            const btn = document.getElementById('noBtn');
+            noClickCount++;
+            if (noClickCount <= 6) {
+                btn.style.position = 'fixed';
+                btn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+                btn.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+            } else {
+                btn.style.display = 'none';
+                alert("Zyada hoshiyari? 😝 Ab sirf 'Yes' hi dabana padega! 😋🔮");
+            }
+        }
+
+        function goToStep2() {
+            document.getElementById('bgMusic').play();
+            document.getElementById('step1').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('hidden');
+                document.getElementById('reactionText').innerText = "Mujhe pata hi tha! My intuition is never wrong 🥳😋";
+            }, 500);
+        }
+
+        function openScrapbook() {
+            document.getElementById('mainBody').style.background = '#111';
+            document.getElementById('step2').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('step3').classList.remove('hidden');
+                const quotes = [
+                    "Capturing the magic that only you carry. 📸✨", "Aesthetic Vibes ✨", "Keep Blooming 🌸", "Limited Edition 🌍", "One of a Kind 💎", "Simply the Best 🌈", "Smile suits you 😊", "Radiating Positive ✨", "Heart of Gold 💛", "Making Memories ⏳", "Unique Vibe 🌈", "Sweetest Rasmalai 🍬"
+                ];
+                const stickers = ["✨", "🌸", "🦋", "⭐"];
+                const stack = document.getElementById('stack');
+                for(let i=12; i>=1; i--) {
+                    const card = document.createElement('div');
+                    card.className = 'photo-card';
+                    card.style.setProperty('--r', (Math.random() * 10 - 5) + 'deg');
+                    card.style.zIndex = 12 - i;
+                    card.id = `card-${i}`;
+                    const s1 = stickers[Math.floor(Math.random()*stickers.length)];
+                    card.innerHTML = `<div class="washi-tape"></div><div class="sticker" style="top:-5px; left:-10px; --sr:-10deg">${s1}</div><img src="photo${i}.jpg"><div class="photo-quote">${quotes[i-1]} 😋</div>`;
+                    
+                    // Butterflies interaction logic
+                    card.onclick = () => {
+                        card.style.transform = "translateX(200%) rotate(45deg)";
+                        card.style.opacity = "0";
+
+                        // Create butterflies on tap
+                        for (let j = 0; j < 5; j++) {
+                            const butterfly = document.createElement('div');
+                            butterfly.className = 'butterfly';
+                            butterfly.innerHTML = '🦋';
+                            butterfly.style.left = (Math.random() * 80 + 10) + 'vw';
+                            butterfly.style.top = (Math.random() * 80 + 10) + 'vh';
+                            document.body.appendChild(butterfly);
+                            setTimeout(() => butterfly.remove(), 3000); // Remove butterfly after animation
+                        }
+
+                        currentPhotoIndex++;
+                        if(currentPhotoIndex === 12) document.getElementById('nextStepBtn').classList.remove('hidden');
+                    };
+                    stack.appendChild(card);
+                }
+            }, 500);
+        }
+
+        function showClosingNote() {
+            document.getElementById('mainBody').style.background = 'var(--pink-bg)';
+            document.getElementById('step3').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('step4').classList.remove('hidden');
+                let i = 0;
+                const txt = "May your day be as bright as your smile and as lovely as your soul. Thank you for making this world a bit more aesthetic! 🥳😝✨";
+                function type() {
+                    if (i < txt.length) {
+                        document.getElementById('finalMsg').innerHTML += txt.charAt(i);
+                        i++; setTimeout(type, 50);
+                    } else { document.getElementById('finalPart').classList.remove('hidden'); }
+                }
+                type();
+            }, 500);
+        }
+
+        function showByeBye() {
+            document.getElementById('step4').classList.add('hidden');
+            setTimeout(() => document.getElementById('step5').classList.remove('hidden'), 500);
+        }
+    </script>
+</body>
+</html>
